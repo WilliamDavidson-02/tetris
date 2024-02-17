@@ -8,6 +8,7 @@ namespace tetris
         {
             var game = new Game();
             
+            Console.CursorVisible = false;
             game.Start();
 
             while (!game.GameOver)
@@ -22,17 +23,8 @@ namespace tetris
                         case ConsoleKey.DownArrow:
                         case ConsoleKey.LeftArrow:
                         case ConsoleKey.RightArrow:
-                            if (!game.Paused)
-                                game.Input(input.Key);
+                            game.Input(input.Key);
                             break;
-
-                        case ConsoleKey.P:
-                            if (game.Paused)
-                                game.Resume();
-                            else
-                                game.Pause();
-                            break;
-
                         case ConsoleKey.Escape:
                             game.Stop();
                             return;

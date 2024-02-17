@@ -1,49 +1,40 @@
 using System;
-using System.Security.Cryptography;
 
 namespace tetris
 {
     public class Game
     {
         private ScheduleTimer _timer;
+        private readonly Board _board = new Board(16, 10);
+        private Tetrominoe _shape;
         
-        public bool Paused { get; private set; }
         public bool GameOver { get; private set; }
 
         public void Start()
         {
-            Console.WriteLine("Start");
             ScheduleNextTick();
-        }
-
-        public void Pause()
-        {
-            Console.WriteLine("Pause");
-            Paused = true;
-            _timer.Pause();
-        }
-
-        public void Resume()
-        {
-            Console.WriteLine("Resume");
-            Paused = false;
-            _timer.Resume();
         }
 
         public void Stop()
         {
-            Console.WriteLine("Stop");
+            Console.Clear();
             GameOver = true;
         }
 
-        public void Input(ConsoleKey key)
-        {
-            Console.WriteLine($"Player pressed key: {key}");
-        }
+        public void Input(ConsoleKey key) {}
 
         private void Tick()
         {
-            Console.WriteLine("Tick");
+            _board.Draw();
+            if (_shape == null)
+            {
+                _shape = new Tetrominoe();
+                _shape.Spawn(_board);
+            }
+            else
+            {
+                _shape.Fall(_board);
+            }
             ScheduleNextTick();
         }
 
