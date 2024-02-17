@@ -21,26 +21,34 @@ namespace tetris
             GameOver = true;
         }
 
-        public void Input(ConsoleKey key) {}
+        public void Input(ConsoleKey key)
+        {
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    _shape.Rotate();
+                    break;
+            }
+        }
 
         private void Tick()
         {
             _board.Draw();
             if (_shape == null)
             {
-                _shape = new Tetrominoe();
-                _shape.Spawn(_board);
+                _shape = new Tetrominoe(_board);
+                _shape.Spawn();
             }
             else
             {
-                _shape.Fall(_board);
+                _shape.Fall();
             }
             ScheduleNextTick();
         }
 
         private void ScheduleNextTick()
         {
-            _timer = new ScheduleTimer(500, Tick);
+            _timer = new ScheduleTimer(1000, Tick);
         }
     }
 }

@@ -20,8 +20,10 @@ namespace tetris
             {
                 for (var c = 0; c < Cols; c++)
                 {
+                    Console.ForegroundColor = (ConsoleColor)Field[r, c];
                     Console.SetCursorPosition(c, r);
                     Console.Write(Field[r, c]);
+                    Console.ResetColor();
                 }
             }
         }
