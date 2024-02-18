@@ -6,8 +6,9 @@ namespace tetris
     {
         private int _x;
         private int _y;
-        private int _rotation = 0;
+        private int _rotation;
         private readonly Board _board;
+        public bool IsSpawned = false;
 
         private readonly int[] _i = { 11, 11, 11, 11 }; // 11 = Cyan ConsoleColor
 
@@ -20,7 +21,7 @@ namespace tetris
         {
             for (var i = 0; i < _i.Length; i++)
             {
-                if (_rotation == 0 || _rotation == 180)
+                if (!IsVertical())
                 {
                     _board.Field[_y, _x + i] = _i[i];
                 }
@@ -35,7 +36,7 @@ namespace tetris
         {
             for (var i = 0; i < _i.Length; i++)
             {
-                if (_rotation == 0 || _rotation == 180)
+                if (!IsVertical())
                 {
                     _board.Field[_y, _x + i] = 0;
                 }
@@ -48,16 +49,31 @@ namespace tetris
 
         public void Spawn()
         {
+            IsSpawned = true;
+            
             var random = new Random();
-            _x = random.Next(0, _board.Cols - _i.Length);
+            _x = random.Next(0, _board.Cols - _i.Length - 1);
             _y = 0;
+            _rotation = 0;
             
             Draw();
         }
 
         public void Fall()
         {
-            if (_y == _board.Rows) return;
+            Console.SetCursorPosition(15, 10);
+            Console.Write($"Y = {_y}, X = {_x}");
+            
+            Console.SetCursorPosition(15, 11);
+            Console.Write($"Rows = {_board.Rows}, Cols = {_board.Cols}");
+            
+            if (_y == _board.Rows - 1 || _y + _i.Length == _board.Rows && IsVertical())
+            {
+                IsSpawned = false;
+                return;
+            }
+            
+            if (!IsSpawned) return;
             
             // clear prev location
             Clear();
@@ -69,16 +85,41 @@ namespace tetris
 
         public void Rotate()
         {
-            var isVertical = _rotation + 90 == 90 || _rotation + 90 == 270;
-            if (_y + _i.Length >= _board.Rows && !isVertical) return;
+            if (_y + _i.Length >= _board.Rows) return;
             
             Clear();
             
             _rotation += 90;
             if (_rotation >= 360) _rotation = 0;
-            _x += _rotation == 90 || _rotation == 270 ? 1 : -1;  
+            _x += IsVertical() ? 1 : -1;  
             
             Draw();
+        }
+
+        public void Left()
+        {
+            Clear();
+            
+            _x -= 1;
+            if (_x < 0) _x = 0;
+            
+            Draw();
+        }
+        
+        public void Right()
+        {
+            Clear();
+            
+            _x += 1;
+            if (_x > _board.Cols - 1 && IsVertical()) _x = _board.Cols - 1;
+            if (_x + _i.Length > _board.Cols - 1 && !IsVertical()) _x = _board.Cols - _i.Length;
+            
+            Draw();
+        }
+
+        private bool IsVertical()
+        {
+            return _rotation == 90 || _rotation == 270;
         }
     }
 }

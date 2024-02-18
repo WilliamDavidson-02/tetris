@@ -22,7 +22,7 @@ namespace tetris
                 {
                     Console.ForegroundColor = (ConsoleColor)Field[r, c];
                     Console.SetCursorPosition(c, r);
-                    Console.Write(Field[r, c]);
+                    Console.Write('*');
                     Console.ResetColor();
                 }
             }

@@ -5,10 +5,16 @@ namespace tetris
     public class Game
     {
         private ScheduleTimer _timer;
-        private readonly Board _board = new Board(16, 10);
-        private Tetrominoe _shape;
+        private readonly Board _board;
+        private readonly Tetrominoe _shape;
         
         public bool GameOver { get; private set; }
+
+        public Game()
+        {
+            _board = new Board(16, 10);
+            _shape = new Tetrominoe(_board);
+        }
 
         public void Start()
         {
@@ -28,27 +34,28 @@ namespace tetris
                 case ConsoleKey.UpArrow:
                     _shape.Rotate();
                     break;
+                case ConsoleKey.LeftArrow:
+                    _shape.Left();
+                    break;
+                case ConsoleKey.RightArrow:
+                    _shape.Right();
+                    break;
             }
         }
 
         private void Tick()
         {
+            if (!_shape.IsSpawned) _shape.Spawn();
+            
+            _shape.Fall();
+            
             _board.Draw();
-            if (_shape == null)
-            {
-                _shape = new Tetrominoe(_board);
-                _shape.Spawn();
-            }
-            else
-            {
-                _shape.Fall();
-            }
             ScheduleNextTick();
         }
 
         private void ScheduleNextTick()
         {
-            _timer = new ScheduleTimer(1000, Tick);
+            _timer = new ScheduleTimer(500, Tick);
         }
     }
 }
