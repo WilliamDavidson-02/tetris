@@ -67,11 +67,14 @@ namespace tetris
             Console.SetCursorPosition(15, 11);
             Console.Write($"Rows = {_board.Rows}, Cols = {_board.Cols}");
             
+            
             if (_y == _board.Rows - 1 || _y + _i.Length == _board.Rows && IsVertical())
             {
                 IsSpawned = false;
                 return;
             }
+            
+            CheckStopPos();
             
             if (!IsSpawned) return;
             
@@ -98,23 +101,50 @@ namespace tetris
 
         public void Left()
         {
+            if (_x - 1 < 0 || HasNeighbour(_x - 1)) return;
+            
             Clear();
-            
             _x -= 1;
-            if (_x < 0) _x = 0;
-            
             Draw();
         }
         
         public void Right()
         {
+            if (_x + 1 > _board.Cols - 1 && IsVertical()) return;
+            if (_x + _i.Length + 1 > _board.Cols - 1 && !IsVertical()) return;
+            if (HasNeighbour(IsVertical() ? _x + 1 : _x + _i.Length + 1)) return;
+            
             Clear();
-            
             _x += 1;
-            if (_x > _board.Cols - 1 && IsVertical()) _x = _board.Cols - 1;
-            if (_x + _i.Length > _board.Cols - 1 && !IsVertical()) _x = _board.Cols - _i.Length;
-            
             Draw();
+        }
+
+        private void CheckStopPos()
+        {
+            var width = IsVertical() ? 1 : _i.Length;
+            var stepDown = IsVertical() ? _y + _i.Length : _y + 1;
+            for (var c = 0; c < width; c++)
+            {
+                if (_board.Field[stepDown, c + _x] != 0)
+                {
+                    IsSpawned = false;
+                }
+            }
+        }
+
+        private bool HasNeighbour(int neighbourPos)
+        {
+            var height = IsVertical() ? _i.Length : 1;
+
+            for (var i = 0; i < height; i++)
+            {
+                if (_board.Field[_y + i, neighbourPos] != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool IsVertical()
