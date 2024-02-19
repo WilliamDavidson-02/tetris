@@ -75,33 +75,52 @@ namespace tetris
             }
             
             CheckStopPos();
-            
             if (!IsSpawned) return;
             
-            // clear prev location
             Clear();
             
-            // set new location
             _y += 1;
             Draw();
         }
 
         public void Rotate()
         {
-            if (_y + _i.Length >= _board.Rows) return;
+            if (_y + _i.Length >= _board.Rows || !IsSpawned) return;
+            
+            // Check if rotation is going to cause collision
+            if (!IsVertical())
+            {
+                for (var i = 1; i < _i.Length; i++)
+                {
+                    if (_board.Field[_y + i, _x + 1] != 0) return;
+                }
+            }
+            else
+            {
+                if (_board.Field[_y, _x - 1] != 0) return;
+                var rightLength = _x >= _board.Cols - _i.Length ? _board.Cols - 1 - _x : _i.Length; 
+                for (var i = 1; i < rightLength; i++)
+                {
+                    if (_board.Field[_y, _x + i] != 0) return;
+                }
+            }
             
             Clear();
             
             _rotation += 90;
             if (_rotation >= 360) _rotation = 0;
-            _x += IsVertical() ? 1 : -1;  
+            _x += IsVertical() ? 1 : -1;
+            if (_x < 0) _x = 0;
+            if (!IsVertical() && _x > _board.Cols - _i.Length) _x = _board.Cols - _i.Length; 
             
             Draw();
         }
 
         public void Left()
         {
-            if (_x - 1 < 0 || HasNeighbour(_x - 1)) return;
+            if (_x == 0 || HasNeighbour(_x - 1)) return;
+            CheckStopPos();
+            if (!IsSpawned) return;
             
             Clear();
             _x -= 1;
@@ -111,8 +130,10 @@ namespace tetris
         public void Right()
         {
             if (_x + 1 > _board.Cols - 1 && IsVertical()) return;
-            if (_x + _i.Length + 1 > _board.Cols - 1 && !IsVertical()) return;
-            if (HasNeighbour(IsVertical() ? _x + 1 : _x + _i.Length + 1)) return;
+            if (_x + _i.Length > _board.Cols - 1 && !IsVertical()) return;
+            CheckStopPos();
+            if (!IsSpawned) return;
+            if (HasNeighbour(IsVertical() ? _x + 1 : _x + _i.Length)) return;
             
             Clear();
             _x += 1;
@@ -143,7 +164,6 @@ namespace tetris
                     return true;
                 }
             }
-
             return false;
         }
 
