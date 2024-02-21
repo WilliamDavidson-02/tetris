@@ -67,13 +67,6 @@ namespace tetris
             Console.SetCursorPosition(15, 11);
             Console.Write($"Rows = {_board.Rows}, Cols = {_board.Cols}");
             
-            
-            if (_y == _board.Rows - 1 || _y + _i.Length == _board.Rows && IsVertical())
-            {
-                IsSpawned = false;
-                return;
-            }
-            
             CheckStopPos();
             if (!IsSpawned) return;
             
@@ -97,7 +90,7 @@ namespace tetris
             }
             else
             {
-                if (_board.Field[_y, _x - 1] != 0) return;
+                if (_x != 0 && _board.Field[_y, _x - 1] != 0) return;
                 var rightLength = _x >= _board.Cols - _i.Length ? _board.Cols - 1 - _x : _i.Length; 
                 for (var i = 1; i < rightLength; i++)
                 {
@@ -144,6 +137,13 @@ namespace tetris
         {
             var width = IsVertical() ? 1 : _i.Length;
             var stepDown = IsVertical() ? _y + _i.Length : _y + 1;
+
+            if (stepDown > _board.Rows - 1)
+            {
+                IsSpawned = false;
+                return;
+            }
+            
             for (var c = 0; c < width; c++)
             {
                 if (_board.Field[stepDown, c + _x] != 0)
