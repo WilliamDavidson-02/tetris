@@ -50,9 +50,14 @@ namespace tetris
 
         private void Tick()
         {
-            if (!_shape.IsSpawned) _shape.Spawn();
+            _board.FindFilledRow();
             
-            _shape.Fall();
+            if (!_board.IsClearingRow)
+            {
+                if (!_shape.IsSpawned) _shape.Spawn();
+
+                _shape.Fall();
+            }
             
             _board.Draw();
             ScheduleNextTick();

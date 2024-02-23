@@ -10,7 +10,7 @@ namespace tetris
         private readonly Board _board;
         public bool IsSpawned = false;
 
-        private readonly int[] _i = { 11, 11, 11, 11 }; // 11 = Cyan ConsoleColor
+        private readonly int[] _i = { 1, 1, 1, 1 };
 
         public Tetrominoe(Board board)
         {
