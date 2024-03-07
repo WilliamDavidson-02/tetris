@@ -38,7 +38,7 @@ namespace tetris
             {
                 case ConsoleKey.W:
                 case ConsoleKey.UpArrow:
-                    // Rotate
+                    _shape.Rotate();
                     break;
                 case ConsoleKey.D:
                 case ConsoleKey.RightArrow:

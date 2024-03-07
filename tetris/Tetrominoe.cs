@@ -5,9 +5,9 @@ namespace tetris
 {
     public class Tetrominoe
     {
-        private int _x;
+        private int _x = 2;
         private int _y;
-        private int _rotation;
+        private int _rotation = 1;
         private int[,] _currentHold = null;
         private int[,] _upNext = null;
 
@@ -17,7 +17,10 @@ namespace tetris
         private readonly Board _board;
 
         // Shapes
-        private static readonly int[,] I = { { 11, 11, 11, 11 } };
+        private static readonly int[,] I =
+        {
+            { 11, 11, 11, 11 }
+        };
         private static readonly int[,] J =
         {
             { 1, 1, 1 }, 
@@ -66,12 +69,10 @@ namespace tetris
             }
 
             _time++;
-            
             for (var r = 0; r < _currentHold.GetLength(0); r++)
             {
                 for (var c = 0; c < _currentHold.GetLength(1); c++)
                 {
-                    
                     if (_currentHold[r,c] == 0) continue;
                     
                     Console.ForegroundColor = (ConsoleColor)_currentHold[r, c];
@@ -146,7 +147,20 @@ namespace tetris
 
         public void Rotate()
         {
+            var height = _currentHold.GetLength(0);
+            var width = _currentHold.GetLength(1);
 
+            var newHold = new int[width, height]; 
+
+            for (var r = 0; r < height; r++)
+            {
+                for (var c = 0; c < width; c++)
+                {
+                    newHold[c, height - r - 1] = _currentHold[r, c];
+                }
+            }
+
+            _currentHold = newHold;
         }
 
         public void Left()
@@ -161,7 +175,7 @@ namespace tetris
 
         private void CheckStopPos()
         {
-
+            
         }
 
         private void Collisions()
