@@ -7,7 +7,6 @@ namespace tetris
         private ScheduleTimer _timer;
         private readonly Board _board;
         private readonly Tetrominoe _shape;
-        private readonly int _interval;
         
         public bool GameOver { get; private set; }
 
@@ -15,57 +14,64 @@ namespace tetris
         {
             _board = new Board(16, 10);
             _shape = new Tetrominoe(_board);
-            _interval = 500;
         }
 
         public void Start()
         {
+            _shape.NewShape();
             ScheduleNextTick();
         }
 
-        public void Stop()
+        private void Stop()
         {
             Console.Clear();
             GameOver = true;
         }
 
-        public void Input(ConsoleKey key)
+        public void Input()
         {
-            switch (key)
+            if (!Console.KeyAvailable) return;
+            
+            var input = Console.ReadKey(true);
+
+            switch (input.Key)
             {
+                case ConsoleKey.W:
                 case ConsoleKey.UpArrow:
-                    _shape.Rotate();
+                    // Rotate
                     break;
-                case ConsoleKey.LeftArrow:
-                    _shape.Left();
-                    break;
+                case ConsoleKey.D:
                 case ConsoleKey.RightArrow:
-                    _shape.Right();
+                    // Right
                     break;
+                case ConsoleKey.S:
                 case ConsoleKey.DownArrow:
-                    _shape.Fall();
+                    // Fall
+                    break;
+                case ConsoleKey.A:
+                case ConsoleKey.LeftArrow:
+                    // left
+                    break;
+                case ConsoleKey.Escape:
+                    Stop();
+                    break;
+                case ConsoleKey.R:
+                    // Restart
                     break;
             }
         }
 
         private void Tick()
         {
-            _board.FindFilledRow();
-            
-            if (!_board.IsClearingRow)
-            {
-                if (!_shape.IsSpawned) _shape.Spawn();
-
-                _shape.Fall();
-            }
-            
             _board.Draw();
+            _shape.RenderHold();
+            _shape.RenderNext();
             ScheduleNextTick();
         }
 
         private void ScheduleNextTick()
         {
-            _timer = new ScheduleTimer(_interval, Tick);
+            _timer = new ScheduleTimer(20, Tick);
         }
     }
 }
