@@ -165,12 +165,16 @@ namespace tetris
 
         public void Left()
         {
+            if (_x == 0) return;
 
+            _x--;
         }
         
         public void Right()
         {
+            if (_x + _currentHold.GetLength(1) >= _board.Cols) return;
 
+            _x++;
         }
 
         private void CheckStopPos()

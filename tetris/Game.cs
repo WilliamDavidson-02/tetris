@@ -42,7 +42,7 @@ namespace tetris
                     break;
                 case ConsoleKey.D:
                 case ConsoleKey.RightArrow:
-                    // Right
+                    _shape.Right();
                     break;
                 case ConsoleKey.S:
                 case ConsoleKey.DownArrow:
@@ -50,7 +50,7 @@ namespace tetris
                     break;
                 case ConsoleKey.A:
                 case ConsoleKey.LeftArrow:
-                    // left
+                    _shape.Left();
                     break;
                 case ConsoleKey.Escape:
                     Stop();
