@@ -19,15 +19,20 @@ namespace tetris
         // Shapes
         private static readonly int[,] I =
         {
-            { 11, 11, 11, 11 }
+            { 0, 0, 0, 0 },
+            { 11, 11, 11, 11 },
+            { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 }
         };
         private static readonly int[,] J =
         {
+            { 0, 0, 0 },
             { 1, 1, 1 }, 
-            { 0, 0, 1 }
+            { 0, 0, 1 },
         };
         private static readonly int[,] L =
         {
+            { 0, 0, 0 },
             { 6, 6, 6 }, 
             { 6, 0, 0 }
         };
@@ -39,17 +44,19 @@ namespace tetris
         private static readonly int[,] S =
         {
             { 0, 2, 2 }, 
-            { 2, 2, 0 }
+            { 2, 2, 0 },
+
         };
         private static readonly int[,] T =
         {
+            { 0, 0, 0 },
             { 5, 5, 5 }, 
             { 0, 5, 0 }
         };
         private static readonly int[,] Z =
         {
             { 10, 10, 0 }, 
-            { 0, 10, 10 }
+            { 0, 10, 10 },
         };
 
         private static readonly List<int[,]> Shapes = new List<int[,]>() { I, J, L, O, S, T, Z }; 
@@ -61,14 +68,22 @@ namespace tetris
 
         public void RenderHold() 
         {
-            // Make shape fall down
             if (_time >= _maxTime)
             {
-                _y++;
+                if (!_board.Collisions(_currentHold, _x, _y + 1))
+                {
+                    // Make shape fall down
+                    _y++;
+                }
+                else
+                {
+                    // Move peace to board and get a new peace
+                }
                 _time = 0;
             }
 
             _time++;
+            
             for (var r = 0; r < _currentHold.GetLength(0); r++)
             {
                 for (var c = 0; c < _currentHold.GetLength(1); c++)
@@ -165,26 +180,12 @@ namespace tetris
 
         public void Left()
         {
-            if (_x == 0) return;
-
-            _x--;
+            if (!_board.Collisions(_currentHold, _x - 1, _y)) _x--;
         }
         
         public void Right()
         {
-            if (_x + _currentHold.GetLength(1) >= _board.Cols) return;
-
-            _x++;
-        }
-
-        private void CheckStopPos()
-        {
-            
-        }
-
-        private void Collisions()
-        {
-            
+            if (!_board.Collisions(_currentHold, _x + 1, _y)) _x++;
         }
     }
 }
