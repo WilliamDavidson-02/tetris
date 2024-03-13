@@ -7,59 +7,16 @@ namespace tetris
     {
         private int _x = 2;
         private int _y;
-        private int _rotation = 1;
         private int[,] _currentHold = null;
         private int[,] _upNext = null;
+        private int _rotation;
 
         private readonly int _maxTime = 50;
         private int _time = 0;
         
         private readonly Board _board;
 
-        // Shapes
-        private static readonly int[,] I =
-        {
-            { 0, 0, 0, 0 },
-            { 11, 11, 11, 11 },
-            { 0, 0, 0, 0 },
-            { 0, 0, 0, 0 }
-        };
-        private static readonly int[,] J =
-        {
-            { 0, 0, 0 },
-            { 1, 1, 1 }, 
-            { 0, 0, 1 },
-        };
-        private static readonly int[,] L =
-        {
-            { 0, 0, 0 },
-            { 6, 6, 6 }, 
-            { 6, 0, 0 }
-        };
-        private static readonly int[,] O =
-        {
-            { 14, 14 }, 
-            { 14, 14 }
-        };
-        private static readonly int[,] S =
-        {
-            { 0, 2, 2 }, 
-            { 2, 2, 0 },
-
-        };
-        private static readonly int[,] T =
-        {
-            { 0, 0, 0 },
-            { 5, 5, 5 }, 
-            { 0, 5, 0 }
-        };
-        private static readonly int[,] Z =
-        {
-            { 10, 10, 0 }, 
-            { 0, 10, 10 },
-        };
-
-        private static readonly List<int[,]> Shapes = new List<int[,]>() { I, J, L, O, S, T, Z }; 
+        private readonly Data _data = new Data();
 
         public Tetrominoe(Board board)
         {
@@ -83,6 +40,9 @@ namespace tetris
             }
 
             _time++;
+            
+            // Console.SetCursorPosition(12, 2);
+            // Console.Write($"x = {_x} y = {_y}");
             
             for (var r = 0; r < _currentHold.GetLength(0); r++)
             {
@@ -150,9 +110,11 @@ namespace tetris
         public void NewShape()
         {
             var random = new Random();
+            var holdIndex = random.Next(_data.Shapes.Count);
+            var nextIndex = random.Next(_data.Shapes.Count);
             
-            _currentHold = _currentHold == null ? Shapes[random.Next(Shapes.Count)] : _upNext;
-            _upNext = Shapes[random.Next(Shapes.Count)];
+            _currentHold = _currentHold == null ? _data.Shapes[holdIndex] : _upNext;
+            _upNext = _data.Shapes[nextIndex];
         }
 
         public void Fall()
@@ -174,8 +136,36 @@ namespace tetris
                     newHold[c, height - r - 1] = _currentHold[r, c];
                 }
             }
+            
+            var rotation = _rotation < 3 ? _rotation + 1 : 0;
+            
+            if (!WallKicks(newHold, rotation)) return;
 
+            _rotation = rotation;
             _currentHold = newHold;
+        }
+
+        bool WallKicks(int[,] peace, int rotation)
+        {
+            var wallKicks = peace.GetLength(0) == 4
+                ? _data.WallKicksI
+                : _data.WallKicks;
+
+            for (var i = 0; i < wallKicks.GetLength(1); i++)
+            {
+                var x = _x + wallKicks[rotation, i, 0];
+                var y = _y + wallKicks[rotation, i, 1];
+
+                if (!_board.Collisions(peace, x, y))
+                {
+                    _x = x;
+                    _y = y;
+                    return true;
+                }
+                
+            }
+
+            return false;
         }
 
         public void Left()
