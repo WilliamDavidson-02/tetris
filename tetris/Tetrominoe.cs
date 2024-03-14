@@ -7,12 +7,12 @@ namespace tetris
     {
         private int _x = 2;
         private int _y;
-        private int[,] _currentHold = null;
-        private int[,] _upNext = null;
+        private int[,] _currentHold;
+        private int[,] _upNext;
         private int _rotation;
 
-        private readonly int _maxTime = 50;
-        private int _time = 0;
+        private int _maxTime = 50;
+        private int _time;
         
         private readonly Board _board;
 
@@ -33,6 +33,8 @@ namespace tetris
                 else
                 {
                     HandleStopPos(_currentHold, _x, _y);
+                    // Clear lines and check if speed should increase
+                    _maxTime = _board.ClearLines(_maxTime);
                 }
                 _time = 0;
             }
