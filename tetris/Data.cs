@@ -65,5 +65,37 @@ namespace tetris
         };
         
         public readonly List<int[,]> Shapes = new List<int[,]>() { I, J, L, O, S, T, Z }; 
+        
+        public char GetLetterRepresentation(int code)
+        {
+            var letter = ' ';
+            
+            switch (code)
+            {   
+                case 11:
+                    letter = 'I';
+                    break;
+                case 1:
+                    letter = 'J';
+                    break;
+                case 6:
+                    letter = 'L';
+                    break;
+                case 14:
+                    letter = 'O';
+                    break;
+                case 2:
+                    letter = 'S';
+                    break;
+                case 5:
+                    letter = 'T';
+                    break;
+                case 10:
+                    letter = 'Z';
+                    break;
+            }
+
+            return letter;
+        }
     }
 }

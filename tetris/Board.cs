@@ -6,8 +6,10 @@ namespace tetris
     {
         public int Rows { get; private set; }
         public int Cols { get; private set; }
-        public readonly int[,] Field;
+        public int[,] Field { get; set; }
 
+        public readonly Data Data = new Data();
+        
         public Board(int rows, int cols)
         {
             Rows = rows;
@@ -21,9 +23,13 @@ namespace tetris
             {
                 for (var c = 0; c < Cols; c++)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    var cell = Field[r, c] == 0
+                        ? '#'
+                        : Data.GetLetterRepresentation(Field[r, c]);
+                    
+                    Console.ForegroundColor = (ConsoleColor)Field[r, c];
                     Console.SetCursorPosition(c, r);
-                    Console.Write('#');
+                    Console.Write(cell);
                 }
             }
             Console.ResetColor();
@@ -48,7 +54,7 @@ namespace tetris
             return false;
         }
 
-        bool CheckBounds(int y, int x)
+        private bool CheckBounds(int y, int x)
         {
             if (x < 0 || x >= Cols) return false;
 

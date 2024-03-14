@@ -16,8 +16,6 @@ namespace tetris
         
         private readonly Board _board;
 
-        private readonly Data _data = new Data();
-
         public Tetrominoe(Board board)
         {
             _board = board;
@@ -34,7 +32,7 @@ namespace tetris
                 }
                 else
                 {
-                    // Move peace to board and get a new peace
+                    HandleStopPos(_currentHold, _x, _y);
                 }
                 _time = 0;
             }
@@ -52,7 +50,7 @@ namespace tetris
                     
                     Console.ForegroundColor = (ConsoleColor)_currentHold[r, c];
                     Console.SetCursorPosition(_x + c, _y + r);
-                    Console.Write(GetLetterRepresentation(_currentHold[r, c]));
+                    Console.Write(_board.Data.GetLetterRepresentation(_currentHold[r, c]));
                     Console.ResetColor();
                 }
             }
@@ -69,56 +67,34 @@ namespace tetris
                     
                     Console.ForegroundColor = (ConsoleColor)_upNext[r, c];
                     Console.SetCursorPosition(12 + c, 5 + r);
-                    Console.Write(GetLetterRepresentation(_upNext[r, c]));
+                    Console.Write(_board.Data.GetLetterRepresentation(_upNext[r, c]));
                     Console.ResetColor();
                 }
             }
         }
 
-        private string GetLetterRepresentation(int code)
+        public void ClearNextSpot(int[,] peace, int left, int top)
         {
-            var letter = "";
-            
-            switch (code)
-            {   
-                case 11:
-                    letter = "I";
-                    break;
-                case 1:
-                    letter = "J";
-                    break;
-                case 6:
-                    letter = "L";
-                    break;
-                case 14:
-                    letter = "O";
-                    break;
-                case 2:
-                    letter = "S";
-                    break;
-                case 5:
-                    letter = "T";
-                    break;
-                case 10:
-                    letter = "Z";
-                    break;
+            for (var r = 0; r < peace.GetLength(0); r++)
+            {
+                for (var c = 0; c < peace.GetLength(1); c++)
+                {
+                    Console.SetCursorPosition(left + c, top + r);
+                    Console.Write(' ');
+                }
             }
-
-            return letter;
         }
 
         public void NewShape()
         {
             var random = new Random();
-            var holdIndex = random.Next(_data.Shapes.Count);
-            var nextIndex = random.Next(_data.Shapes.Count);
-            
-            _currentHold = _currentHold == null ? _data.Shapes[holdIndex] : _upNext;
-            _upNext = _data.Shapes[nextIndex];
-        }
+            var holdIndex = random.Next(_board.Data.Shapes.Count);
+            var nextIndex = random.Next(_board.Data.Shapes.Count);
 
-        public void Fall()
-        {
+            if (_currentHold != null) ClearNextSpot(_upNext, 12, 5);
+            
+            _currentHold = _currentHold == null ? _board.Data.Shapes[holdIndex] : _upNext;
+            _upNext = _board.Data.Shapes[nextIndex];
 
         }
 
@@ -145,11 +121,11 @@ namespace tetris
             _currentHold = newHold;
         }
 
-        bool WallKicks(int[,] peace, int rotation)
+        private bool WallKicks(int[,] peace, int rotation)
         {
             var wallKicks = peace.GetLength(0) == 4
-                ? _data.WallKicksI
-                : _data.WallKicks;
+                ? _board.Data.WallKicksI
+                : _board.Data.WallKicks;
 
             for (var i = 0; i < wallKicks.GetLength(1); i++)
             {
@@ -166,6 +142,27 @@ namespace tetris
             }
 
             return false;
+        }
+        
+        private void HandleStopPos(int[,] peace, int x, int y)
+        {
+            // Move Tetrominoe to field
+            for (var r = 0; r < peace.GetLength(0); r++)
+            {
+                for (var c = 0; c < peace.GetLength(1); c++)
+                {
+                    if (peace[r, c] == 0) continue;
+                    
+                    _board.Field[y + r, x + c] = peace[r, c];
+                }
+            }
+            
+            // reset values
+            _x = 2;
+            _y = 0;
+            _rotation = 0;
+            
+            NewShape();
         }
 
         public void Left()
