@@ -39,9 +39,6 @@ namespace tetris
 
             _time++;
             
-            // Console.SetCursorPosition(12, 2);
-            // Console.Write($"x = {_x} y = {_y}");
-            
             for (var r = 0; r < _currentHold.GetLength(0); r++)
             {
                 for (var c = 0; c < _currentHold.GetLength(1); c++)
@@ -173,6 +170,24 @@ namespace tetris
         public void Right()
         {
             if (!_board.Collisions(_currentHold, _x + 1, _y)) _x++;
+        }
+
+        public bool Fall()
+        {
+            if (!_board.Collisions(_currentHold, _x, _y + 1))
+            {
+                _y++;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Drop()
+        {
+            while (Fall())
+            {
+            }
         }
     }
 }

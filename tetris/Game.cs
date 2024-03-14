@@ -46,7 +46,7 @@ namespace tetris
                     break;
                 case ConsoleKey.S:
                 case ConsoleKey.DownArrow:
-                    // Fall
+                    _shape.Fall();
                     break;
                 case ConsoleKey.A:
                 case ConsoleKey.LeftArrow:
@@ -57,6 +57,9 @@ namespace tetris
                     break;
                 case ConsoleKey.R:
                     // Restart
+                    break;
+                case ConsoleKey.Spacebar:
+                    _shape.Drop();
                     break;
             }
         }
