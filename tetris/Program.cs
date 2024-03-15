@@ -14,8 +14,7 @@ namespace tetris
 
             while (!game.GameOver)
             {
-                game.Input();
-              // Game loop  
+                game.Input(); 
             }
         }
     }

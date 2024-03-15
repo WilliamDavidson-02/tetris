@@ -5,8 +5,8 @@ namespace tetris
     public class Game
     {
         private ScheduleTimer _timer;
-        private readonly Board _board;
-        private readonly Tetrominoe _shape;
+        private Board _board;
+        private Tetrominoe _shape;
         
         public bool GameOver { get; private set; }
 
@@ -18,6 +18,7 @@ namespace tetris
 
         public void Start()
         {
+            GameOver = false;
             _shape.NewShape();
             ScheduleNextTick();
         }
@@ -55,9 +56,6 @@ namespace tetris
                 case ConsoleKey.Escape:
                     Stop();
                     break;
-                case ConsoleKey.R:
-                    // Restart
-                    break;
                 case ConsoleKey.Spacebar:
                     _shape.Drop();
                     break;
@@ -66,10 +64,25 @@ namespace tetris
 
         private void Tick()
         {
+            if (IsGameOver()) return;
+            
             _board.Draw();
             _shape.RenderHold();
             _shape.RenderNext();
             ScheduleNextTick();
+        }
+
+        private bool IsGameOver()
+        {
+            for (var c = 0; c < _board.Cols; c++)
+            {
+                if (_board.Field[0, c] == 0) continue;
+                
+                Stop();
+                return true;
+            }
+
+            return false;
         }
 
         private void ScheduleNextTick()
