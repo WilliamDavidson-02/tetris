@@ -8,7 +8,7 @@ namespace tetris
         public int Cols { get; private set; }
         public int[,] Field { get; set; }
         public readonly Data Data = new Data();
-        private int _clearRows;
+        private int _clearedRows;
         
         public Board(int rows, int cols)
         {
@@ -73,7 +73,7 @@ namespace tetris
                 {
                     ClearLine(row);
                     
-                    maxTime = AddPoints(maxTime);
+                    maxTime = HandleFallTime(maxTime);
 
                     MoveRowsDown(row);
                 }
@@ -117,13 +117,13 @@ namespace tetris
             return true;
         }
 
-        private int AddPoints(int maxTime)
+        private int HandleFallTime(int maxTime)
         {
-            _clearRows += 1;
+            _clearedRows += 1;
 
-            if (_clearRows < 5) return maxTime;
+            if (_clearedRows < 2) return maxTime;
             
-            _clearRows = 0;
+            _clearedRows = 0;
             return maxTime - 5 >= 0 ? maxTime - 5 : 0;
         }
     }
